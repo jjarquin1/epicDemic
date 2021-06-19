@@ -1,0 +1,26 @@
+{
+  "name": "epicdemic",
+  "version": "1.0.0",
+  "description": "A social elimination game to play with friends",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jjarquin1/epicDemic.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jjarquin1/epicDemic/issues"
+  },
+  "homepage": "https://github.com/jjarquin1/epicDemic#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "inquirer": "^8.1.1",
+    "mysql": "^2.18.1"
+  }
+}
