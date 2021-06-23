@@ -1,5 +1,5 @@
 const router = require('express').Router();
-
+const {User} = require('../models/users')
 
 app.use(connectRoute(function (router) {
   router.get('/', function (req, res, next) {
