@@ -3,6 +3,8 @@ const express = require('express');
 const session = require('express-session');
 const exphbs = require('express-handlebars');
 const routes = require('./controller/api');
+const homeRoutes = require('./controller/homeRoutes')
+const gameRoutes = require('./controller/gameRoutes')
 // const helpers = require('./utils/helpers');
 
 const sequelize = require('./config/connection');
@@ -36,6 +38,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(routes);
+app.use(homeRoutes);
+app.use(gameRoutes);
 
 sequelize.sync({ force: false }).then(() => {
   server.listen(PORT, () => console.log('Now listening'));

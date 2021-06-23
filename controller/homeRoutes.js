@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const {User} = require('../models/users')
 
-app.use(connectRoute(function (router) {
+
   router.get('/', function (req, res, next) {
     res.end('index');
   });
@@ -26,6 +26,6 @@ app.use(connectRoute(function (router) {
   router.post('/game:id', function (req, res, next) {
       res.end('game');
   });
-}));
+
 
 module.exports = router;
