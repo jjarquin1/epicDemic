@@ -18,7 +18,7 @@
         "title": "Civilians",
         "description": "Regular ol'civilian, no special abilities or role. good luck!",
         "Affinity": "good"
-    }, ,
+    }, 
     {
         "title": "Officer",
         "description": "Can inspect a player once per night to see if they are infected. Immune to infection, if biten by zombie, Officer is notified of a random zombie.",
