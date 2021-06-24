@@ -10,11 +10,18 @@
         <script type="text/javascript" src="./js/scenes/Day.js"></script>
         <script type="text/javascript" src="./js/scenes/Prepare.js"></script>
         <script type="text/javascript" src="./js/scenes/Daybreak.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
     </head>
  
     <body>
         
         <script src="/js/game.js"></script>
+        <script type="text/javascript">
+            const socket = io();
+    socket.on("connect", () => {
+      console.log(socket.id + "connected"); // x8WIv7-mJelg7on_ALbx
+    });
+        </script>
     </body>
  
 </html>
