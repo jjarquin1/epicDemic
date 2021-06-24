@@ -3,9 +3,8 @@ class Night extends Phaser.Scene {
         super("night-phase")
     }
 
- 
-
    create() {
+        
         this.cameras.main.fadeIn(1000, 0, 0, 0)
         this.cameras.main.setBackgroundColor('#17202A');
         this.add.text(10, 10, 'Night Phase', {fill: '#EAEDED'});
@@ -15,7 +14,7 @@ class Night extends Phaser.Scene {
         })
         this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
             this.time.delayedCall(1000, () => {
-                this.scene.start('day-phase')
+                this.scene.start('daybreak')
             })
         })
     }
