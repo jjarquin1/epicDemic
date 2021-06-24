@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const exphbs = require('express-handlebars');
+
 const routes = require('./controller/api');
 const homeRoutes = require('./controller/homeRoutes')
 const gameRoutes = require('./controller/gameRoutes')
@@ -31,8 +32,15 @@ const sess = {
 app.use(session(sess));
 
 // Inform Express.js on which template engine to use
- app.set('view engine', 'handlebars');
- app.engine('handlebars', hbs.engine);
+app.engine('hbs', exphbs({
+  defaultLayout: 'main',
+  extname: '.hbs'
+}));
+app.set('view engine', 'hbs');
+
+app.get('/', (req, res) => {
+  res.render('homepage');
+});
 
 
 app.use(express.json());
