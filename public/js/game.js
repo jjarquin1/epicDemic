@@ -3,7 +3,7 @@ var config = {
     parent: 'phaser-example',
     width: 1920,
     height: 1080,
-    scene: [Preload, Night, Day],
+    scene: [Preload, Night, Day, Prepare, Daybreak],
     physics: {
       default: 'arcade',
       arcade: {
