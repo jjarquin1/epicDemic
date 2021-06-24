@@ -5,7 +5,8 @@ const exphbs = require('express-handlebars');
 const routes = require('./controller/api');
 const homeRoutes = require('./controller/homeRoutes')
 const gameRoutes = require('./controller/gameRoutes')
-// const helpers = require('./utils/helpers');
+const helpers = require('./utils/helpers/helpers');
+const hbs = exphbs.create({ helpers });
 
 const sequelize = require('./config/connection');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
@@ -15,8 +16,7 @@ const server = require('http').createServer(app);;
 const PORT = process.env.PORT || 3001;
 var io = require('socket.io')(server);
 
-// Set up Handlebars.js engine with custom helpers
-// const hbs = exphbs.create({ helpers });
+
 
 const sess = {
   secret: 'Super secret secret',
@@ -31,8 +31,9 @@ const sess = {
 app.use(session(sess));
 
 // Inform Express.js on which template engine to use
-// app.engine('handlebars', hbs.engine);
-// app.set('view engine', 'handlebars');
+ app.set('view engine', 'handlebars');
+ app.engine('handlebars', hbs.engine);
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
