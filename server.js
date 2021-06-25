@@ -18,6 +18,14 @@ const server = require('http').createServer(app);;
 const PORT = process.env.PORT || 3001;
 var io = require('socket.io')(server);
 
+const formatMessage = require('./utils/messages');
+const {
+  userJoin,
+  getCurrentUser,
+  userLeave,
+  getRoomUsers
+} = require('./utils/users');
+
 let players = [];
 const chatHistory = [];
 
@@ -57,18 +65,72 @@ app.use(gameRoutes);
 app.use(registerRoute);
 
 
-io.on('connection', client => {
-  client.on('event', data => {
-      console.log(data)
+
+const botName = 'Moderator';
+
+// Run when client connects
+io.on('connection', socket => {
+  socket.on('joinRoom', ({ username, room }) => {
+    const user = userJoin(socket.id, username, room);
+
+    socket.join(user.room);
+
+    // Welcome current user
+    socket.emit('message', formatMessage(botName, 'Welcome to ChatCord!'));
+
+    // Broadcast when a user connects
+    socket.broadcast
+      .to(user.room)
+      .emit(
+        'message',
+        formatMessage(botName, `${user.username} has joined the chat`)
+      );
+
+    // Send users and room info
+    io.to(user.room).emit('roomUsers', {
+      room: user.room,
+      users: getRoomUsers(user.room)
+    });
   });
-  client.on('disconnect', () => { });
-  
-  client.on('chat', data => {
-      console.log(client.id)
-      chatHistory.push(`${client.id} said ${data}`);
-      io.emit('newChat',chatHistory);
-  })
+
+  // Listen for chatMessage
+  socket.on('chatMessage', msg => {
+    const user = getCurrentUser(socket.id);
+
+    io.to(user.room).emit('message', formatMessage(user.username, msg));
+  });
+
+  // Runs when client disconnects
+  socket.on('disconnect', () => {
+    const user = userLeave(socket.id);
+
+    if (user) {
+      io.to(user.room).emit(
+        'message',
+        formatMessage(botName, `${user.username} has left the chat`)
+      );
+
+      // Send users and room info
+      io.to(user.room).emit('roomUsers', {
+        room: user.room,
+        users: getRoomUsers(user.room)
+      });
+    }
+  });
 });
+
+// io.on('connection', client => {
+//   client.on('event', data => {
+//       console.log(data)
+//   });
+//   client.on('disconnect', () => { });
+  
+//   client.on('chat', data => {
+//       console.log(client.id)
+//       chatHistory.push(`${client.id} said ${data}`);
+//       io.emit('newChat',chatHistory);
+//   })
+// });
 
 sequelize.sync({ force: false }).then(() => {
   server.listen(PORT, () => console.log('Now listening'));
