@@ -1,13 +1,14 @@
 const User = require('./users');
-const Class = require('./gameClasses')
+const Class = require('./gameClasses');
+const Profile = require('./profile');
 
-User.hasOne(Class, {
+User.hasOne(Profile, {
     foreignKey: 'user_id',
     onDelete: 'CASCADE',
 });
 
-Class.belongsTo(User, {
+Profile.belongsTo(User, {
     foreignkey: 'user_id', 
-})
+});
 
-module.exports = {User, Class}; 
+module.exports = {User, Profile}; 
