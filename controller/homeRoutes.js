@@ -19,6 +19,12 @@ const {User} = require('../models/users')
       res.end('profile' + req.params.id);
   });
 
+
+  
+  router.get('/profile', function (req, res, next) {
+    res.render('profile');
+});
+
   router.get('/game:id', function (req, res, next) {
     res.end('game' + req.params.id);
 });
