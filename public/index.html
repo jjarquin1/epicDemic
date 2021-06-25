@@ -17,10 +17,14 @@
         
         <script src="/js/game.js"></script>
         <script type="text/javascript">
-            const socket = io();
-    socket.on("connect", () => {
-      console.log(socket.id + "connected"); // x8WIv7-mJelg7on_ALbx
-    });
+        const socket = io();
+        socket.on("connect", () => {
+            console.log(socket.id + " connected"); // x8WIv7-mJelg7on_ALbx
+
+        socket.on('disconnect', function () {
+            console.log(socket.id + " disconnected");
+            })
+        });
         </script>
     </body>
  

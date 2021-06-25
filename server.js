@@ -17,6 +17,8 @@ const server = require('http').createServer(app);;
 const PORT = process.env.PORT || 3001;
 var io = require('socket.io')(server);
 
+let players = [];
+
 
 
 const sess = {
@@ -53,9 +55,14 @@ app.use(gameRoutes);
 
 
 io.on('connection', function (socket) {
-  console.log('a user connected');
+  console.log('a user connected: ' + socket.id);
+
+  players.push(socket.id);
+  console.log(players);
+  
   socket.on('disconnect', function () {
-    console.log('user disconnected');
+    console.log('user disconnected: ' + socket.id);
+    players = players.filter(player => player !== socket.id);
   });
 });
 
