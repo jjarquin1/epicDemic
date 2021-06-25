@@ -6,6 +6,7 @@ const exphbs = require('express-handlebars');
 const routes = require('./controller/api');
 const homeRoutes = require('./controller/homeRoutes')
 const gameRoutes = require('./controller/gameRoutes')
+const registerRoute = require('./controller/registerRoute')
 const helpers = require('./utils/helpers/helpers');
 const hbs = exphbs.create({ helpers });
 
@@ -52,6 +53,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(routes);
 app.use(homeRoutes);
 app.use(gameRoutes);
+app.use(registerRoute);
 
 
 io.on('connection', function (socket) {
