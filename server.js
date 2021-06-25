@@ -4,7 +4,7 @@ const session = require('express-session');
 const exphbs = require('express-handlebars');
 
 const routes = require('./controller/api');
-const homeRoutes = require('./controller/homeRoutes')
+const profileRoutes = require('./controller/profileRoutes')
 const gameRoutes = require('./controller/gameRoutes')
 const registerRoute = require('./controller/registerRoute')
 const helpers = require('./utils/helpers/helpers');
@@ -51,7 +51,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(routes);
-app.use(homeRoutes);
+app.use(profileRoutes);
 app.use(gameRoutes);
 app.use(registerRoute);
 
