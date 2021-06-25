@@ -19,6 +19,7 @@ const PORT = process.env.PORT || 3001;
 var io = require('socket.io')(server);
 
 let players = [];
+const chatHistory = [];
 
 
 
@@ -56,16 +57,17 @@ app.use(gameRoutes);
 app.use(registerRoute);
 
 
-io.on('connection', function (socket) {
-  console.log('a user connected: ' + socket.id);
-
-  players.push(socket.id);
-  console.log(players);
-  
-  socket.on('disconnect', function () {
-    console.log('user disconnected: ' + socket.id);
-    players = players.filter(player => player !== socket.id);
+io.on('connection', client => {
+  client.on('event', data => {
+      console.log(data)
   });
+  client.on('disconnect', () => { });
+  
+  client.on('chat', data => {
+      console.log(client.id)
+      chatHistory.push(`${client.id} said ${data}`);
+      io.emit('newChat',chatHistory);
+  })
 });
 
 sequelize.sync({ force: false }).then(() => {

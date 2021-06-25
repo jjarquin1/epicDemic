@@ -8,6 +8,7 @@ class Preload extends Phaser.Scene {
     }
 
     create() {
+        
         this.cameras.main.fadeIn(1000, 0, 0, 0)
         this.add.image(1000, 400, 'logo')
         this.input.on('pointerdown', () => {
