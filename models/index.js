@@ -1,4 +1,4 @@
 const User = require('./users');
 
 
-module.exports = {User, Profile}; 
+module.exports = {User}; 

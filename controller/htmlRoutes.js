@@ -12,6 +12,11 @@ router.get('/register', async (req, res) => {
     res.render('register');
 });
 
+router.get('/login', async (req, res) => {
+    // Send the rendered Handlebars.js template back as the response
+    res.render('login');
+});
+
 router.get('/game', async (req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
 })

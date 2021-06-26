@@ -13,12 +13,15 @@ const loginFormHandler = async (event) => {
       headers: { 'Content-Type': 'application/json' },
     });
 
-    if (response.ok) {
-      // If successful, redirect the browser to the profile page
-      document.location.replace('/profile');
-    } else {
-      alert(response.statusText);
-    }
+    const data = await response.json();
+    console.log(data)
+    
+    // if (response.ok) {
+    //   // If successful, redirect the browser to the profile page
+    //   document.location.replace('/register');
+    // } else {
+    //   alert(response.statusText);
+    // }
   }
 };
 
