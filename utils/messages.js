@@ -4,7 +4,7 @@ function formatMessage(username, text) {
   return {
     username,
     text,
-    time: moment.utc(fixture.kick_off).local().format('HH:mm A')
+    time: moment().local().format('h:mm a')
   };
 }
 
