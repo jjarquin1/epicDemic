@@ -30,7 +30,6 @@ const {
 } = require('./utils/users');
 
 let players = [];
-const chatHistory = [];
 
 
 
@@ -70,17 +69,24 @@ app.use(routes);
 
 
 
-const botName = 'Moderator';
+const botName = 'Moderator ';
 
 // Run when client connects
 io.on('connection', socket => {
   socket.on('joinRoom', ({ username, room }) => {
     const user = userJoin(socket.id, username, room);
 
+    players.push(socket.id);
+    console.log(players);
+
+    if (players.length === 6) {
+      io.emit('message', formatMessage(botName, 'Game starting.'));
+    }
+
     socket.join(user.room);
 
     // Welcome current user
-    socket.emit('message', formatMessage(botName, 'Welcome to ChatCord!'));
+    socket.emit('message', formatMessage(botName, 'Welcome to Outbreak!'));
 
     // Broadcast when a user connects
     socket.broadcast
@@ -108,6 +114,9 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
     const user = userLeave(socket.id);
 
+    players = players.filter(player => player !== socket.id);
+    console.log(players);
+
     if (user) {
       io.to(user.room).emit(
         'message',
@@ -128,7 +137,7 @@ io.on('connection', socket => {
 //       console.log(data)
 //   });
 //   client.on('disconnect', () => { });
-  
+
 //   client.on('chat', data => {
 //       console.log(client.id)
 //       chatHistory.push(`${client.id} said ${data}`);
