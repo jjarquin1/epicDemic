@@ -4,10 +4,9 @@
             <div id="register-row" class="row justify-content-center align-items-center">
                 <div id="register-column" class="col-md-6">
                     <div id="register-box" class="col-md-12">
-                        <form id="register-form" class="form" action="" method="post">
+                        <form class="register-form">
                             <h3 class="text-center text-danger">Register</h3>
                             <div class="form-group">
-                                <form action="/auth/register" method="POST">
                                 <label for="username" class="text-danger">Username:</label><br>
                                 <input type="text" name="username" id="name-signup" class="form-control">
                             </div>
@@ -17,12 +16,11 @@
                             </div>
                             <div class="form-group">
                                 <label for="password" class="text-danger">Password:</label><br>
-                                <input type="text" name="password" id="password-signup" class="form-control">
+                                <input type="password" name="password" id="password-signup" class="form-control">
                             </div>
                             <div class="form-group">
                                 <label for="remember-me" class="text-danger"><span>Remember me</span> <span><input id="remember-me" name="remember-me" type="checkbox"></span></label><br>
                                 <input type="submit" name="submit"  id="registerBtn"class="btn btn btn-warning btn-md" value="submit">
-                                </form>
                             </div>
                             <div id="register-link" class="text-right">
                                 <a href="/" class="text-danger">Home</a>

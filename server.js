@@ -4,13 +4,14 @@ const session = require('express-session');
 const exphbs = require('express-handlebars');
 
 
-const routes = require('./routes/homepage');
-const auth = require('./routes/auth')
-const profileRoutes = require('./routes/profileRoutes')
-const gameRoutes = require('./routes/gameRoutes')
-const registerRoute = require('./routes/registerRoute')
+// const routes = require('./routes/homepage');
+// const auth = require('./routes/auth')
+// const profileRoutes = require('./routes/profileRoutes')
+// const gameRoutes = require('./routes/gameRoutes')
+// const registerRoute = require('./routes/registerRoute')
 const helpers = require('./utils/helpers/helpers');
 const hbs = exphbs.create({ helpers });
+const routes = require("./controller")
 
 const sequelize = require('./config/connection');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
@@ -62,10 +63,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(routes);
-app.use(auth)
-app.use(profileRoutes);
-app.use(gameRoutes);
-app.use(registerRoute);
+// app.use(auth)
+// app.use(profileRoutes);
+// app.use(gameRoutes);
+// app.use(registerRoute);
 
 
 
