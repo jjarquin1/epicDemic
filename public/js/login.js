@@ -51,9 +51,9 @@ console.log(data)
 };
 
 const loginForm = document
-  .querySelector('.login-form');
+  .querySelector('.form-group"');
   if(loginForm) loginForm.addEventListener('submit', loginFormHandler);
 
 const registerForm = document
-  .querySelector('.register-form');
+  .querySelector('.form-detail');
   if(registerForm) registerForm.addEventListener('submit', signupFormHandler);
