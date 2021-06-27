@@ -1,6 +1,7 @@
 const router = require('express').Router();
-// const { decodeBase64 } = require('bcryptjs');
-const { User } = require('../../models/')
+const { User } = require('../../models/');
+const bcrypt = require('bcrypt');
+
 
 // gets user info when
 router.post('/register', async (req, res) => {
@@ -18,7 +19,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// posting login in login page and checking to make sure the password matches
+// posting login  and checking to make sure the password matches
 router.post('/login', async (req, res) => {
   try {
     // Find the user who matches the posted e-mail address
@@ -47,13 +48,39 @@ router.post('/login', async (req, res) => {
       req.session.logged_in = true;
       
       res.json({ user: userData, message: 'You are now logged in!' });
-    });
-
+    });    
   } catch (err) {
     res.status(400).json(err);
   }
 });
 
+// remove the session
+router.post('/logout', (req, res) => {
+  if (req.session.logged_in) {
+    // Remove the session variables
+    req.session.destroy(() => {
+      res.status(204).end();
+    });
+  } else {
+    res.status(404).end();
+  }
+});
+
+//hashbreaks
+router.post('/register', async (req, res) => {
+  try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10)
+    User.push({
+      id: Date.now().toString(),
+      name: req.body.name,
+      email: req.body.email,
+      password: hashedPassword
+    })
+    res.redirect('/')
+  } catch {
+    req.redirect('register')
+  }
+})
 
 
 module.exports = router;

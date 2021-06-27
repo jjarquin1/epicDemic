@@ -16,12 +16,12 @@ const loginFormHandler = async (event) => {
     const data = await response.json();
     console.log(data)
     
-    // if (response.ok) {
-    //   // If successful, redirect the browser to the profile page
-    //   document.location.replace('/register');
-    // } else {
-    //   alert(response.statusText);
-    // }
+    if (response.ok) {
+      // If successful, redirect the browser to the profile page
+      document.location.replace('/game');
+    } else {
+      alert(response.statusText);
+    }
   }
 };
 
@@ -51,7 +51,7 @@ console.log(data)
 };
 
 const loginForm = document
-  .querySelector('.form-group"');
+  .querySelector('.form-group');
   if(loginForm) loginForm.addEventListener('submit', loginFormHandler);
 
 const registerForm = document

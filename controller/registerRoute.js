@@ -1,15 +1,10 @@
-const router = require('express').Router();
-const bcrypt = require('bcrypt')
-const { User } = require('../models')
+// // const router = require('express').Router();
+// // const bcrypt = require('bcrypt')
+// // const { User } = require('../models')
 
 
 
 
-
-router.get('/register', async (req, res) => {
-  // Send the rendered Handlebars.js template back as the response
-  res.render('register');
-});
 
 router.post('/register', async (req, res) => {
   try {
@@ -26,4 +21,4 @@ router.post('/register', async (req, res) => {
   }
 })
 
-module.exports = router;
+// // module.exports = router;
