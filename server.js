@@ -2,13 +2,25 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const exphbs = require('express-handlebars');
+const game = require('./game')
+
+////game logic
+global.argv = require ('optimist')
+	.boolean('custom')
+	.boolean('debug')
+	.boolean('wills')
+	.alias('t', 'countdown')
+	.argv
+;
+
+var debug = argv.debug;
+
+var defaultCountdownTime = debug ? 3 : 10;
+game.countdownTime =  defaultCountdownTime;
+console.log(game.countdownTime);
+////end of game logic 
 
 
-// const routes = require('./routes/homepage');
-// const auth = require('./routes/auth')
-// const profileRoutes = require('./routes/profileRoutes')
-// const gameRoutes = require('./routes/gameRoutes')
-// const registerRoute = require('./routes/registerRoute')
 const helpers = require('./utils/helpers/helpers');
 const hbs = exphbs.create({ helpers });
 const routes = require("./controller")
@@ -19,7 +31,7 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const app = express();
 const server = require('http').createServer(app);;
 const PORT = process.env.PORT || 3001;
-var io = require('socket.io')(server);
+global.io = require('socket.io').listen(server);
 
 const formatMessage = require('./utils/messages');
 const {
@@ -29,7 +41,7 @@ const {
   getRoomUsers
 } = require('./utils/users');
 
-let players = [];
+
 
 
 
@@ -69,67 +81,103 @@ app.use(routes);
 
 
 
-const botName = 'Moderator ';
+//const botName = 'Moderator ';
 
 // Run when client connects
 io.on('connection', socket => {
-  socket.on('joinRoom', ({ username, room }) => {
-    const user = userJoin(socket.id, username, room);
+  socket.emit('message', { message: 'Welcome to the lobby.' });
+	socket.broadcast.emit('message', { message: 'A new client has connected.' });
 
-    players.push(socket.id);
-    console.log(players);
+	//request announcement and header from the game
+	socket.emit('announcement', { message: game.announcement() });
+	socket.emit('header', { message: game.header() });
 
-    if (players.length === 6) {
-      io.emit('message', formatMessage(botName, 'Game starting.'));
-    }
+	socket.game_alive = false;
 
-    socket.join(user.room);
+	socket.game_inventory = [];
 
-    // Welcome current user
-    socket.emit('message', formatMessage(botName, 'Welcome to Outbreak!'));
+	socket.last_msg_time = Date.now();
 
-    // Broadcast when a user connects
-    socket.broadcast
-      .to(user.room)
-      .emit(
-        'message',
-        formatMessage(botName, `${user.username} has joined the chat`)
-      );
+	if(!debug) {
+		if(!game.state()){
+			socket.emit('message', { message: 'Please pick a nickname to register as a player.' });
+			game.checkNumPlayers();
+		} else {
+			socket.emit('message', { message: 'The game you are trying to join has already started.' });
+		}
+	} else {
+		socket.game_nickname = socket.id;
+		socket.emit('hideNameField');
+		if(!game.state()){
+			game.checkNumPlayers();
+		}
+	}
 
-    // Send users and room info
-    io.to(user.room).emit('roomUsers', {
-      room: user.room,
-      users: getRoomUsers(user.room)
-    });
-  });
+	socket.on('disconnect', function() {
+		if (socket.game_nickname) {
+			io.sockets.emit('message', { message: socket.game_nickname + ' has disconnected.' });
+		} else {
+			io.sockets.emit('message', { message: 'A client has disconnected.' });
+		}
 
-  // Listen for chatMessage
-  socket.on('chatMessage', msg => {
-    const user = getCurrentUser(socket.id);
+		if(!game.state()){
+			setTimeout(function() {
+				game.checkNumPlayers();
+			}, 1000);
+		}
+	});
 
-    io.to(user.room).emit('message', formatMessage(user.username, msg));
-  });
+	socket.on('send', function (data) {
+		if (socket.game_nickname) {
+			if (data.message.length) {
+				if (Date.now() - socket.last_msg_time > 1000) {
+					data.username = socket.game_nickname;
+					if (!game.state()) {
+						io.sockets.emit('message', data);
+					} else {
+						game.filterMessage(socket, data);
+					}
 
-  // Runs when client disconnects
-  socket.on('disconnect', () => {
-    const user = userLeave(socket.id);
+					socket.last_msg_time = Date.now();
+				} else {
+					socket.emit('message', { message: 'Please slow down your messages.'});
+				}
+			}
+		} else {
+			socket.emit('alert', { message: 'Please set a nickname.'});
+		}
+	});
 
-    players = players.filter(player => player !== socket.id);
-    console.log(players);
+	socket.on('vote', function (data) {
+		game.vote(socket, data);
+	});
 
-    if (user) {
-      io.to(user.room).emit(
-        'message',
-        formatMessage(botName, `${user.username} has left the chat`)
-      );
+	socket.on('itemUse', function (data) {
+		game.itemUse(socket, data);
+	});
 
-      // Send users and room info
-      io.to(user.room).emit('roomUsers', {
-        room: user.room,
-        users: getRoomUsers(user.room)
-      });
-    }
-  });
+	socket.on('changeNick', function (data) {
+		if (data && !socket.game_nickname) {
+			var isUnique = true;
+			io.sockets.clients().forEach(function (socket) {
+				if (data == socket.game_nickname) { //custom properties prefixed with game_ so as to not cause collisions
+					isUnique = false;
+				}
+			});
+
+			if (isUnique) {
+				socket.game_nickname = data;
+				socket.emit('hideNameField');
+				if(!game.state()){
+					game.checkNumPlayers();
+				}
+			} else {
+				socket.emit('alert', { message: 'Nickname is not unique.'});
+			}
+		} else {
+			socket.emit('alert', { message: 'Nickname is not valid.' });
+		}
+	});
 });
 
 // io.on('connection', client => {
