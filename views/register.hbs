@@ -1,5 +1,31 @@
+
 <main>
-    <div id="Register">
+    <body class="form-v6">
+	<div class="page-content">
+		<div class="form-v6-content">
+			<div class="form-left">
+				<img style="width:400px; margin-top:40px;" src="/images/image_720.png" alt="form">
+			</div>
+			<form class="form-detail">
+				<h2>Register</h2>
+				<div class="form-row">
+					<input type="text" name="full-name" id="name-signup" class="input-text" placeholder="Your Name" required>
+				</div>
+				<div class="form-row">
+					<input type="text" name="your-email" id="email-signup" class="input-text" placeholder="Email Address" required pattern="[^@]+@[^@]+.[a-zA-Z]{2,6}">
+				</div>
+				<div class="form-row">
+					<input type="password" name="password" id="password-signup" class="input-text" placeholder="Password" required>
+				</div>
+				<div class="form-row-last">
+					<input id="registerBtn" type="submit" name="register" class="register" value="Register">
+                  <a href="/login"><input id="loginBtn" type="button" name="login" class="register" value="Login"></a>  
+				</div>
+			</form>
+		</div>
+	</div>
+
+    {{!-- <div id="Register">
         <div class="container">
             <div id="register-row" class="row justify-content-center align-items-center">
                 <div id="register-column" class="col-md-6">
@@ -33,6 +59,6 @@
         {{#if message }}
         <h4 class='alert alert-danger mt-4'>{{message}}</h4>
         {{/if}}
-    </div>
+    </div> --}}
 </main>
-<script src="./js/login.js"></script>
+<script src="/js/login.js"></script>
