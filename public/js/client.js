@@ -6,7 +6,6 @@ $(document).ready(function() {
 	var nameButton = document.getElementById("nick");
 	var content = document.getElementById("content");
 	var name = document.getElementById("name");
-	var inventory = document.getElementById("inventory");
 	var select = document.getElementById("select");
 
 	socket.on('message', function (data) {
@@ -85,46 +84,8 @@ $(document).ready(function() {
 			option.value = option.text = data[i];
 			select.add(option);
 		}
-
-		var inventoryItems = $('#inventory').children('.item').children('select');
-		for (i = 0; i < inventoryItems.length; i++) {
-			var selectClone = $(select).clone();
-			$(inventoryItems[i]).replaceWith(selectClone);
-		}
 	});
 
-	socket.on('displayInventory', function (data) {
-		if (data) {
-			inventory.style.display = 'inline-block';
-		} else {
-			inventory.style.display = 'none';
-			$(inventory).children('.item').remove();
-		}
-	});
-
-	socket.on('newInventoryItem', function (data) {
-		var item = document.createElement("div");
-		$(item).attr('id', 'item_' + data.index);
-		$(item).data('itemID', data.index);
-		$(item).addClass('item');
-		$(item).append('<b>' + data.item.name + '</b><br />');
-		$(item).append('<i>' + data.item.description + '</i>');
-
-		if (data.item.power) {
-			$(item).append('<select></select><input type="submit" value="' + data.item.actionName + '">');
-			$(item).children('input').click(function() {
-				var index = $(this).parent().data('itemID');
-				var target = $(this).parent().children('select').val();
-				socket.emit('itemUse', { index: index, target: target });
-			});
-		}
-
-		$(inventory).append(item);
-	});
-
-	socket.on('removeInventoryItem', function (data) {
-		$(inventory).children('#item_' + data).remove();
-	});
 
 	var blankOption = document.createElement("option");
 	blankOption.innerHTML = 'no one';
