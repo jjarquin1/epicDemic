@@ -10,25 +10,16 @@ var nightCount = 0;
 
 var wills = false;
 
-function clone(obj) {
-	if(obj == null || typeof(obj) != 'object')
-		return obj;
 
-	var temp = obj.constructor(); // changed
-
-	for(var key in obj)
-		temp[key] = clone(obj[key]);
-	return temp;
-}
 
 function checkVictory () {
-	var villageVictory = (io.sockets.clients('mafia').length === 0);
-	var mafiaVictory = (io.sockets.clients('mafia') >= io.sockets.clients('village'));
+	var refugeeVictory = (io.sockets.clients('zombie').length === 0);
+	var zombieVictory = (io.sockets.clients('zombie') >= io.sockets.clients('refugee'));
 
-	if (villageVictory) {
-		endGame('Village');
-	} else if (mafiaVictory) {
-		endGame('Mafia');
+	if (refugeeVictory) {
+		endGame('The refugees band together and eradicate the zombie horde');
+	} else if (zombieVictory) {
+		endGame('BRAINS! The zombie horde has overun the outpost.');
 	}
 }
 
@@ -41,8 +32,8 @@ function playerDeathCleanup (socket) {
 	socket.emit('disableVote', true);
 
 	socket.game_role = null;
-	socket.leave('village');
-	socket.leave('mafia');
+	socket.leave('refugee');
+	socket.leave('zombie');
 	socket.join('spectator');
 }
 
@@ -61,66 +52,37 @@ function killPlayer (socket) {
 	checkVictory();
 }
 
-//item definitions
-var items = {
-	gun: {
-		name: 'Handgun',
-		description: 'Easily concealed snubnosed handgun with a single bullet',
-		actionName: 'shoot',
-		power: true, //does the item present a menu during daytime
-		powerFunc: function (socket, chosenPlayer) {
-			if (Math.random() < 0.25) {
-				io.sockets.emit('message', { message: socket.game_nickname + ' pulls out a gun and shoots ' + chosenPlayer.game_nickname + '!'});
-			} else {
-				io.sockets.emit('message', { message: 'A loud gunshot is heard, and a bullet tears through ' + chosenPlayer.game_nickname + '\'s chest! After the dust settles, you realize no one saw exactly who shot him...'});
-			}
-
-			killPlayer(chosenPlayer);
-		}
-	}
-};
-//end item definitions
-
-//role definitions, to be moved to a JSON file at some point in the near future
+//roles
 var roles = {
-	villager: {
-		name: 'villager', //the role's reported name (ex: paranoid cops will still be named 'cop')
-		group: 'village', //group players assigned the role are affiliated with
-		power: false //does the role have any special actions at nighttime
+	civilian: {
+		name: 'civilian', 
+		group: 'refugee', 
+		power: false 
 	},
-	cop: {
-		name: 'cop',
-		group: 'village',
+	officer: {
+		name: 'officer',
+		group: 'refugee',
 		power: true,
-		powerFunc: function (socket, chosenPlayer) { //investigates a player during the night and reports their group affiliation
-			socket.emit('message', { message: 'It appears that ' + chosenPlayer.game_nickname + ' is affiliated with the ' + chosenPlayer.game_role.group + '.'});
+		powerFunc: function (socket, chosenPlayer) {
+			socket.emit('message', { message: 'After your investigation, you conclude that ' + chosenPlayer.game_nickname + ' is a ' + chosenPlayer.game_role.group + '.'});
 		}
 	},
 	doctor: {
 		name: 'doctor',
-		group: 'village',
+		group: 'refugee',
 		power: true,
-		powerFunc: function (socket, chosenPlayer) { //chooses a player to visit during the night to protect from dying overnight
+		powerFunc: function (socket, chosenPlayer) {
 			if (chosenPlayer.game_dying) {
-				socket.emit('message', { message: 'When you open the door to ' + chosenPlayer.game_nickname + '\'s house, you see them face down in a pool of blood! You quickly patch them up before any permanent damage is done.'});
+				socket.emit('message', { message: 'You find ' + chosenPlayer.game_nickname + ' in a dimly lit corner of the refugee outpost, clutching their arm and blilthering nonsense. You lop off their arm before they turn.'});
 				chosenPlayer.game_immunity = true;
 			} else {
-				socket.emit('message', { message: 'You pay ' + chosenPlayer.game_nickname + ' a visit right before dawn breaks, only to find them already in perfect health.'});
+				socket.emit('message', { message: 'During your nightly rounds, you pay ' + chosenPlayer.game_nickname + ' a visit. All manor of postapocalyptic death and decay aside, they seem to be in good health.'});
 			}
 		}
 	},
-	gunsmith: {
-		name: 'gunsmith',
-		group: 'village',
-		power: true,
-		powerFunc: function (socket, chosenPlayer) {
-			chosenPlayer.game_inventory.push(clone(items['gun']));
-			socket.emit('message', { message: 'You gave ' + chosenPlayer.game_nickname + ' a gun.'}); //probably just for testing
-		}
-	},
-	mafioso: {
-		name: 'mafioso',
-		group: 'mafia',
+	zombie: {
+		name: 'zombie',
+		group: 'zombie',
 		power: false
 	}
 };
@@ -129,13 +91,13 @@ var roles = {
 //ar playerRoles = [];
 
 var playerRoles = [
-	roles['villager'],
-	roles['villager'],
-	roles['villager'],
-	roles['cop'],
+	roles['civilian'],
+	roles['civilian'],
+	roles['civilian'],
+	roles['officer'],
 	roles['doctor'],
-	roles['mafioso'],
-	roles['mafioso']
+	roles['zombie'],
+	roles['zombie']
 ];
 
 
@@ -181,7 +143,7 @@ function assignRoles () {
 			players[i].join('alive');
 			players[i].game_role = playerRoles[i];
 			players[i].join(playerRoles[i].group);
-			players[i].emit('message', { message: 'You have been assigned the role of ' + playerRoles[i].name + '. You are affiliated with the ' + playerRoles[i].group + '.' });
+			players[i].emit('message', { message: 'You have been assigned the role of ' + playerRoles[i].name + '.' });
 		} else {
 			players[i].game_alive = false;
 			players[i].join('spectator');
@@ -193,7 +155,7 @@ function assignRoles () {
 function endGame (winner) {
 	state = 3;
 	updateHeader('Game over');
-	updateAnnouncement(winner + ' wins the game!');
+	updateAnnouncement(winner);
 	io.sockets.clients('alive').forEach(function (socket) {
 		playerDeathCleanup(socket);
 	});
@@ -229,7 +191,7 @@ function countedVotes (arr) {
 function handleVotes () {
 	var votes = [];
 	if (state === 1) {
-		votingGroup = 'mafia';
+		votingGroup = 'zombie';
 	} else {
 		votingGroup = 'alive';
 	}
@@ -278,7 +240,7 @@ function dayLoop(duration, ticks) {
 				handleVotes();
 				io.sockets.clients('alive').forEach(function (socket) {
 					if (socket.game_dying) {
-						io.sockets.emit('message', { message: socket.game_nickname + ', the ' + socket.game_role.name + ', was lynched by the town!'});
+						io.sockets.emit('message', { message: socket.game_nickname + ' was exiled from the refugee outpost!'});
 						killPlayer(socket);
 					}
 				});
@@ -293,14 +255,14 @@ function dayLoop(duration, ticks) {
 				io.sockets.emit('clearTargets');
 				io.sockets.emit('displayInventory', false);
 
-				var validMafiaTargets = [];
-				io.sockets.clients('village').forEach(function (socket) {
+				var validzombieTargets = [];
+				io.sockets.clients('refugee').forEach(function (socket) {
 					socket.emit('disableField', true);
 					socket.emit('displayVote', false);
-					validMafiaTargets.push(socket.game_nickname);
+					validzombieTargets.push(socket.game_nickname);
 				});
 
-				io.sockets.in('mafia').emit('validTargets', validMafiaTargets);
+				io.sockets.in('zombie').emit('validTargets', validzombieTargets);
 
 				var powerRoles = io.sockets.clients('alive').filter(function (socket) {
 					return socket.game_role.power;
@@ -320,7 +282,7 @@ function dayLoop(duration, ticks) {
 				});
 
 				var votingPlayers = [];
-				io.sockets.clients('mafia').forEach(function (socket) {
+				io.sockets.clients('zombie').forEach(function (socket) {
 					votingPlayers.push(socket.game_nickname);
 
 					socket.game_hasVoted = false;
@@ -328,7 +290,7 @@ function dayLoop(duration, ticks) {
 					socket.game_vote = null;
 				});
 
-				io.sockets.in('mafia').emit('votingPlayers', votingPlayers);
+				io.sockets.in('zombie').emit('votingPlayers', votingPlayers);
 
 				setTimeout(nightLoop, 1000, nightDuration, 0);
 				state = 1;
@@ -351,10 +313,10 @@ function nightLoop(duration, ticks) {
 				io.sockets.clients('alive').forEach(function (socket) {
 					if (socket.game_dying) {
 						if (socket.game_immunity) {
-							socket.emit('message', { message: 'You wake up covered in bloodied bandages with a horrible headache, remembering nothing of the previous night.'});
+							socket.emit('message', { message: 'You wake up covered in bloodied bandages with a horrible headache. Weird... It seems you are missing an arm.'});
 								socket.game_dying = false;
 						} else {
-							io.sockets.emit('message', { message: socket.game_nickname + ', the ' + socket.game_role.name + ', was killed in the night!'});
+							io.sockets.emit('message', { message: socket.game_nickname + ' was killed in the night!'});
 							killPlayer(socket);
 						}
 					}
@@ -375,15 +337,6 @@ function nightLoop(duration, ticks) {
 
 				var votingPlayers = [];
 				io.sockets.clients('alive').forEach(function (socket) {
-					if (socket.game_inventory.length) {
-						socket.emit('displayInventory', true);
-
-						for (var i = 0; i < socket.game_inventory.length; i++) {
-							socket.emit('newInventoryItem', { index: i, item: socket.game_inventory[i] });
-						}
-					} else {
-						socket.emit('displayInventory', false);
-					}
 
 					votingPlayers.push(socket.game_nickname);
 
@@ -422,7 +375,7 @@ function initialize () {
 	if (dayStart) {
 		nightLoop(0, 0);
 	} else {
-		io.sockets.in('mafia').emit('displayVote', true);
+		io.sockets.in('zombie').emit('displayVote', true);
 		dayLoop(0, 0);
 	}
 }
@@ -456,7 +409,7 @@ function hasEveryoneVoted () {
 		io.sockets.clients('alive').forEach(function (socket) {
 			if (socket.game_role.power && !socket.game_hasPowerVoted) {
 				votedFlag = false;
-			} else if (socket.game_role.group == 'mafia' && !socket.game_hasVoted) {
+			} else if (socket.game_role.group == 'zombie' && !socket.game_hasVoted) {
 				votedFlag = false;
 			}
 		});
@@ -500,8 +453,8 @@ module.exports = {
 				data.message = '<font color="red">' + data.message + '</font>';
 				io.sockets.in('spectator').emit('message', data);
 			} else if (state === 1) {
-				if (clientRooms['/mafia']) {
-					io.sockets.in('mafia').emit('message', data);
+				if (clientRooms['/zombie']) {
+					io.sockets.in('zombie').emit('message', data);
 				}
 			}
 		} else {
@@ -537,8 +490,8 @@ module.exports = {
 		var isValid = true;
 		var clientRooms = io.sockets.manager.roomClients[socket.id];
 		if (!socket.game_role.power) {
-			if (state === 1 && clientRooms['/mafia']) {
-				io.sockets.in('mafia').emit('playerVote', data);
+			if (state === 1 && clientRooms['/zombie']) {
+				io.sockets.in('zombie').emit('playerVote', data);
 			} else if (state === 2) {
 				io.sockets.emit('playerVote', data);
 			} else {
@@ -556,7 +509,7 @@ module.exports = {
 
 		if (isValid) {
 			if (!socket.game_role.power || state === 2) {
-				socket.game_vote = data.message; //this will have to be reworked once mafia power roles are introduced
+				socket.game_vote = data.message; //this will have to be reworked once zombie power roles are introduced
 				socket.game_hasVoted = true;
 			} else {
 				socket.game_hasPowerVoted = true;
@@ -564,25 +517,6 @@ module.exports = {
 
 			if (hasEveryoneVoted()) {
 				endDay = true;
-			}
-		}
-	},
-	itemUse: function(socket, data) {
-		var targetSocket = '';
-
-		if (state === 2) { // right now you can only use items in the daytime
-			io.sockets.clients().forEach(function (socket2) {
-				if (socket2.game_nickname == data.target) {
-					targetSocket = socket2;
-				}
-			});
-		}
-
-		if (targetSocket !== '') {
-			if (socket.game_inventory[data.index] && socket.game_inventory[data.index].power) {
-				socket.game_inventory[data.index].powerFunc(socket, targetSocket);
-				socket.game_inventory.splice(data.index, 1);
-				socket.emit('removeInventoryItem', data.index);
 			}
 		}
 	},
