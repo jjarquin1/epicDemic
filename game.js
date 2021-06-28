@@ -57,13 +57,11 @@ var roles = {
 	civilian: {
 		name: 'civilian', 
 		group: 'refugee',
-		image: './images/girlban.png',
 		power: false 
 	},
 	officer: {
 		name: 'officer',
 		group: 'refugee',
-		image: './images/officerban.png',
 		power: true,
 		powerFunc: function (socket, chosenPlayer) {
 			socket.emit('message', { message: 'After your investigation, you conclude that ' + chosenPlayer.game_nickname + ' is a ' + chosenPlayer.game_role.group + '.'});
@@ -72,7 +70,6 @@ var roles = {
 	doctor: {
 		name: 'doctor',
 		group: 'refugee',
-		image: './images/docban.png',
 		power: true,
 		powerFunc: function (socket, chosenPlayer) {
 			if (chosenPlayer.game_dying) {
@@ -86,7 +83,6 @@ var roles = {
 	zombie: {
 		name: 'zombie',
 		group: 'zombie',
-		image: './images/zomban.png',
 		power: false
 	}
 };
