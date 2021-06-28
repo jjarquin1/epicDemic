@@ -56,12 +56,14 @@ function killPlayer (socket) {
 var roles = {
 	civilian: {
 		name: 'civilian', 
-		group: 'refugee', 
+		group: 'refugee',
+		image: './images/girlban.png',
 		power: false 
 	},
 	officer: {
 		name: 'officer',
 		group: 'refugee',
+		image: './images/officerban.png',
 		power: true,
 		powerFunc: function (socket, chosenPlayer) {
 			socket.emit('message', { message: 'After your investigation, you conclude that ' + chosenPlayer.game_nickname + ' is a ' + chosenPlayer.game_role.group + '.'});
@@ -70,6 +72,7 @@ var roles = {
 	doctor: {
 		name: 'doctor',
 		group: 'refugee',
+		image: './images/docban.png',
 		power: true,
 		powerFunc: function (socket, chosenPlayer) {
 			if (chosenPlayer.game_dying) {
@@ -83,6 +86,7 @@ var roles = {
 	zombie: {
 		name: 'zombie',
 		group: 'zombie',
+		image: './images/zomban.png',
 		power: false
 	}
 };
@@ -136,7 +140,9 @@ function assignRoles () {
 		players.push(socket);
 	});
 	players = shuffle(players);
-
+	playerRoles = shuffle(playerRoles);
+	console.log(playerRoles);
+	console.log(players);
 	for (var i = 0; i < players.length; i++) {
 		if (i <= playerRoles.length - 1) {
 			players[i].game_alive = true;
@@ -144,6 +150,8 @@ function assignRoles () {
 			players[i].game_role = playerRoles[i];
 			players[i].join(playerRoles[i].group);
 			players[i].emit('message', { message: 'You have been assigned the role of ' + playerRoles[i].name + '.' });
+			console.log(playerRoles);
+			console.log(players);
 		} else {
 			players[i].game_alive = false;
 			players[i].join('spectator');
@@ -159,6 +167,18 @@ function endGame (winner) {
 	io.sockets.clients('alive').forEach(function (socket) {
 		playerDeathCleanup(socket);
 	});
+
+	playAgain();
+
+}
+
+function playAgain () {
+	
+	setTimeout(function () {
+		updateHeader('Refresh browser to play again');
+		state = 0;
+	}, 5000);
+
 }
 
 function countedVotes (arr) {
@@ -363,7 +383,7 @@ function initialize () {
 		livingPlayers.push(socket.game_nickname);
 	});
 
-	//possibly replace this later with a point for injecting this kind of thing, I would like everything to be modular
+
 	if (wills) {
 		io.sockets.emit('message', { message: 'This game session has wills enabled. Type /will to set yours.' });
 		io.sockets.clients('alive').forEach(function (socket) {
