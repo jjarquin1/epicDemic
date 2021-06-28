@@ -33,18 +33,6 @@ const server = require('http').createServer(app);;
 const PORT = process.env.PORT || 3001;
 global.io = require('socket.io').listen(server);
 
-const formatMessage = require('./utils/messages');
-const {
-  userJoin,
-  getCurrentUser,
-  userLeave,
-  getRoomUsers
-} = require('./utils/users');
-
-
-
-
-
 const sess = {
   secret: 'Super secret secret',
   cookie: {},
