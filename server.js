@@ -82,7 +82,7 @@ io.on('connection', socket => {
 
 	socket.game_alive = false;
 
-	socket.game_inventory = [];
+	
 
 	socket.last_msg_time = Date.now();
 
