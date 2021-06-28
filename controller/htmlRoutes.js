@@ -26,7 +26,7 @@ router.get('/logout', (req, res) => {
 });
 
 router.get('/game', async (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
+    res.render('game');
 })
 
 router.get('/game', withAuth, async (req, res) => {
