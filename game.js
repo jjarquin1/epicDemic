@@ -21,6 +21,7 @@ function checkVictory () {
 	} else if (zombieVictory) {
 		endGame('BRAINS! The zombie horde has overun the outpost.');
 	}
+
 }
 
 function playerDeathCleanup (socket) {
@@ -163,7 +164,6 @@ function endGame (winner) {
 	io.sockets.clients('alive').forEach(function (socket) {
 		playerDeathCleanup(socket);
 	});
-
 	setTimeout(function () {
 		state = 0;
 		io.sockets.emit('message', { message: 'Refresh your browser to play again.' });

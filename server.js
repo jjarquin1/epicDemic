@@ -106,13 +106,14 @@ io.on('connection', socket => {
 			io.sockets.emit('message', { message: 'A client has disconnected.' });
 		}
 			
+		checkVictory();
+
 		if(!game.state()){
 			setTimeout(function() {
 				game.checkNumPlayers();
 			}, 1000);
 		}
 
-		checkVictory();
 	});
 
 	socket.on('send', function (data) {
