@@ -444,12 +444,28 @@ padding : 50px 0;
 /* game css */
 
 #main-view {
-	width:1000px;
-	margin: 0 auto;
+  min-width: 900px;
+	max-width:1200px;
+	margin: 30px auto;
 }
 
 #header-area {
 	margin: 5px;
+  background-image: url('/images/gamBanner.png.png') ;
+  background-size: cover;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  
+
+}
+
+#header h1{
+  color: white;
+  font-size: 70px;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }
 
 #announcement {
@@ -469,14 +485,17 @@ padding : 50px 0;
 }
 
 #left-pane {
-	background-color: #fff;
+	border-radius: 5px;
+  background-color: #5e9776;
 	min-height: 300px;
 	min-width: 150px;
-	max-width: 20%;
+	max-width: 100%;
 
 	order: 1;
-	flex-grow: 1;
+	flex-grow: 2;
 }
+
+
 
 #middle-pane {
 	order: 2;
@@ -484,23 +503,25 @@ padding : 50px 0;
 }
 
 #content {
-	background-color: #FFFFFF;
+	background-color: #34495e;
 	width: calc(100% - 12px);
 	height: 300px;
 	padding: 5px;
 	border: solid 1px #999;
 	overflow-y: scroll;
+  color: white;
 }
 
 #right-pane {
-	background-color: #fff;
+  border-radius: 5px;
+	background-color: #5e9776;
 	padding: 5px;
 	min-height: 300px;
 	min-width: 150px;
 	max-width: 20%;
 
 	order: 3;
-	flex-grow: 1;
+	flex-grow: 3;
 }
 
 #selectArea {
@@ -527,9 +548,10 @@ padding : 50px 0;
 }
 
 .controls {
-	display: inline-block;
+	display: flex;
+  flex-direction: column;
 	width: 100%;
-	float: left;
+	
 }
 
 .controls > div {
@@ -542,6 +564,8 @@ padding : 50px 0;
 }
 
 #nick-form {
+  display: flex;
+  justify-content: flex-end;
 	width: 100%;
 }
 
@@ -555,6 +579,7 @@ padding : 50px 0;
 
 #chat-form {
 	width: 100%;
+  display: flex;
 }
 
 #field {
@@ -570,4 +595,11 @@ padding : 50px 0;
 	-webkit-box-sizing: border-box;
 	   -moz-box-sizing: border-box;
 	        box-sizing: border-box;
+}
+
+#player-list li{
+  height: 10%;
+  border: 2px solid black;
+  border-radius: 3px;
+  
 }
