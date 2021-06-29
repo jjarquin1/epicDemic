@@ -1,6 +1,22 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	  <script src="/socket.io/socket.io.js"></script>
-
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#"><img style="height:25px" src="/images/outbreak_logo.png"></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+    aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarText"></div>
+  <span class="navbar-text">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Home</a>
+      </li>
+    </ul>
+  </span>
+  </div>
+</nav>
     <div id="main-view">
       <div id="header-area">
         <div id="header"></div>
@@ -29,7 +45,6 @@
             <select id="select"></select><br>
             <input id="vote" type="button" value="vote">
           </div>
-          <div id="inventory"><b>Inventory:</b></div>
         </div>
       </div>
     </div>
