@@ -164,15 +164,9 @@ function endGame (winner) {
 		playerDeathCleanup(socket);
 	});
 
-	playAgain();
-
-}
-
-function playAgain () {
-	
 	setTimeout(function () {
-		updateHeader('Refresh browser to play again');
 		state = 0;
+		io.sockets.emit('message', { message: 'Refresh your browser to play again.' });
 	}, 5000);
 
 }
@@ -547,5 +541,24 @@ module.exports = {
 	},
 	enableWills: function () {
 		wills = true;
+	},
+	reset: function () {
+		state = 3;
+		setTimeout(function () {
+			updateHeader('Refresh browser to play again');
+			state = 0;
+		}, 5000);
+		console.log(state);
+	},
+	checkVictory: function () {
+			var refugeeVictory = (io.sockets.clients('zombie').length === 0);
+			var zombieVictory = (io.sockets.clients('zombie') >= io.sockets.clients('refugee'));
+		
+			if (refugeeVictory) {
+				endGame('The refugees band together and eradicate the zombie horde');
+			} else if (zombieVictory) {
+				endGame('BRAINS! The zombie horde has overun the outpost.');
+			}
+		
 	}
 };

@@ -26,6 +26,7 @@ const hbs = exphbs.create({ helpers });
 const routes = require("./controller")
 
 const sequelize = require('./config/connection');
+const { checkNumPlayers, checkVictory } = require('./game');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const app = express();
@@ -62,14 +63,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(routes);
-// app.use(auth)
-// app.use(profileRoutes);
-// app.use(gameRoutes);
-// app.use(registerRoute);
 
 
 
-//const botName = 'Moderator ';
 
 // Run when client connects
 io.on('connection', socket => {
@@ -102,17 +98,21 @@ io.on('connection', socket => {
 	}
 
 	socket.on('disconnect', function() {
+		socket.game_alive = false;
+		socket.leave('alive');
 		if (socket.game_nickname) {
 			io.sockets.emit('message', { message: socket.game_nickname + ' has disconnected.' });
 		} else {
 			io.sockets.emit('message', { message: 'A client has disconnected.' });
 		}
-
+			
 		if(!game.state()){
 			setTimeout(function() {
 				game.checkNumPlayers();
 			}, 1000);
 		}
+
+		checkVictory();
 	});
 
 	socket.on('send', function (data) {
@@ -149,6 +149,7 @@ io.on('connection', socket => {
 				}
 			});
 
+
 			if (isUnique) {
 				socket.game_nickname = data;
 				socket.emit('hideNameField');
@@ -163,19 +164,6 @@ io.on('connection', socket => {
 		}
 	});
 });
-
-// io.on('connection', client => {
-//   client.on('event', data => {
-//       console.log(data)
-//   });
-//   client.on('disconnect', () => { });
-
-//   client.on('chat', data => {
-//       console.log(client.id)
-//       chatHistory.push(`${client.id} said ${data}`);
-//       io.emit('newChat',chatHistory);
-//   })
-// });
 
 sequelize.sync({ force: false }).then(() => {
   server.listen(PORT, () => console.log('Now listening'));
