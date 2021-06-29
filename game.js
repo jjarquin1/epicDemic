@@ -21,6 +21,11 @@ function checkVictory () {
 	} else if (zombieVictory) {
 		endGame('BRAINS! The zombie horde has overun the outpost.');
 	}
+	setTimeout(function () {
+		state = 0;
+		io.sockets.emit('message', { message: 'Refresh your browser to play again.' });
+	}, 5000);
+
 }
 
 function playerDeathCleanup (socket) {
@@ -163,12 +168,6 @@ function endGame (winner) {
 	io.sockets.clients('alive').forEach(function (socket) {
 		playerDeathCleanup(socket);
 	});
-
-	setTimeout(function () {
-		state = 0;
-		io.sockets.emit('message', { message: 'Refresh your browser to play again.' });
-	}, 5000);
-
 }
 
 function countedVotes (arr) {
