@@ -25,9 +25,9 @@ router.get('/logout', (req, res) => {
     res.render('/login');
 });
 
-router.get('/game', async (req, res) => {
-    res.render('game');
-})
+// router.get('/game', async (req, res) => {
+//     res.render('game');
+// })
 
 router.get('/game', withAuth, async (req, res) => {
     try {
@@ -38,7 +38,7 @@ router.get('/game', withAuth, async (req, res) => {
   
       const users = userData.map((project) => project.get({ plain: true }));
   
-      res.render('frontpage', {
+      res.render('game', {
         users,
         logged_in: req.session.logged_in,
       });

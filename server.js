@@ -21,8 +21,8 @@ console.log(game.countdownTime);
 ////end of game logic 
 
 
-const helpers = require('./utils/helpers/helpers');
-const hbs = exphbs.create({ helpers });
+// const helpers = require('./utils/helpers/helpers');
+// const hbs = exphbs.create({ helpers });
 const routes = require("./controller")
 
 const sequelize = require('./config/connection');
