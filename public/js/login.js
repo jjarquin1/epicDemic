@@ -15,7 +15,7 @@ const loginFormHandler = async (event) => {
 
     const data = await response.json();
     console.log(data)
-    
+
     if (response.ok) {
       // If successful, redirect the browser to the profile page
       document.location.replace('/game');
@@ -28,7 +28,7 @@ const loginFormHandler = async (event) => {
 const signupFormHandler = async (event) => {
   event.preventDefault();
   event.stopPropagation();
-alert("SIGNUP")
+  alert("REGISTRATION COMPLETE!")
   const username = document.querySelector('#name-signup').value.trim();
   const email = document.querySelector('#email-signup').value.trim();
   const password = document.querySelector('#password-signup').value.trim();
@@ -41,7 +41,7 @@ alert("SIGNUP")
     });
 
     const data = await response.json();
-console.log(data)
+    console.log(data)
     // if (response.ok) {
     //   document.location.replace('/profile');
     // } else {
@@ -52,8 +52,9 @@ console.log(data)
 
 const loginForm = document
   .querySelector('.form-group');
-  if(loginForm) loginForm.addEventListener('submit', loginFormHandler);
+if (loginForm) loginForm.addEventListener('submit', loginFormHandler);
 
 const registerForm = document
   .querySelector('.form-detail');
-  if(registerForm) registerForm.addEventListener('submit', signupFormHandler);
+if (registerForm) registerForm.addEventListener('submit', signupFormHandler);
+
