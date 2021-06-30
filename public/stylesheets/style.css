@@ -3,17 +3,12 @@
 html, body {
 
   height: 100%;
-  
   padding: 0;
-  
   margin: 0;
   
   }
 
   .jumbotron{
-    height: 650px;
-    background-image: url('/images/gamebackground.png');
-    background-size: cover;
   }
   
   #login .container #login-row #login-column #login-box {
