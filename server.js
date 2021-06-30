@@ -26,7 +26,7 @@ console.log(game.countdownTime);
 const routes = require("./controller")
 
 const sequelize = require('./config/connection');
-const { checkNumPlayers, checkVictory } = require('./game');
+const { checkNumPlayers, checkVictory, state } = require('./game');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const app = express();
@@ -105,8 +105,11 @@ io.on('connection', socket => {
 		} else {
 			io.sockets.emit('message', { message: 'A client has disconnected.' });
 		}
-			
+		
+		
 		checkVictory();
+		
+		
 
 		if(!game.state()){
 			setTimeout(function() {
