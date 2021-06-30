@@ -158,17 +158,20 @@ function assignRoles () {
 }
 
 function endGame (winner) {
+	if (!state == 0) {
 	state = 3;
 	updateHeader('Game over');
 	updateAnnouncement(winner);
 	io.sockets.clients('alive').forEach(function (socket) {
 		playerDeathCleanup(socket);
 	});
+	
 	setTimeout(function () {
 		state = 0;
-		io.sockets.emit('message', { message: 'Refresh your browser to play again.' });
+		updateHeader('Pre-game Lobby');
+		updateAnnouncement('Please select a new nickname to begin.')
 	}, 5000);
-
+	}
 }
 
 function countedVotes (arr) {
