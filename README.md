@@ -19,16 +19,21 @@
   
   # Usage 
   Register and login to enter game lobby. When enough players load the game will start automatically with a countdown. Choose a nickname and keep an eye out for what role you are assigned as they may have special abilities. The game starts in a night phase where the roles with special abilities take their turn voting on whom they choose to use their abilities on. When the night phase is over the day phase begins in which all players take a vote on whom they suspect to be a Zombie. When all Zombies are eliminated from the game the civilians win. Else if the Zombies outnumber the civilians the Zombies win. Have fun and enjoy!
+
+  https://outbreak-420.herokuapp.com/
   
   # Licence
   ![License](https://img.shields.io/badge/License-MIT-blue.svg)
   
   for more information about this license click here [license](https://opensource.org/licenses/MIT)
   
-  # Constributions
+  # Contributions
   Jason Wood (https://github.com/jgw10713), 
-  Minh (Joe) Nguyen (https://github.com/mambasnow), 
-  Rodrigo Aguayo (https://github.com/Raguayo101), 
+
+  Minh (Joe) Nguyen (https://github.com/mambasnow),
+
+  Rodrigo Aguayo (https://github.com/Raguayo101),
+   
   (JJ) Jose Jarquin (https://github.com/jjarquin1).
  
   # Tests
